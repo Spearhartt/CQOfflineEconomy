@@ -1,0 +1,5 @@
+name: CQOfflineEconomy
+main: com.conquestiamc.OfflineEconomy
+version: 0.0.1
+author: Spearhartt
+depend: [ConquestiaAPI, Vault]
