@@ -47,12 +47,6 @@ public class OfflineEconomy extends JavaPlugin {
             CqLogger.debug(PLUGIN_LABEL + "Creating plugin folder.");
         }
 
-        File players = new File(plugin.getDataFolder() + "/players");
-        if (!players.isDirectory()) {
-            players.mkdir();
-            CqLogger.debug(PLUGIN_LABEL + "Creating 'players' folder.");
-        }
-
         registerEvents();
 
         dataFolder = dir.getPath();
@@ -71,7 +65,7 @@ public class OfflineEconomy extends JavaPlugin {
     }
 
     public void onDisable() {
-
+        checker.savePlayers();
     }
 
     private void registerEvents() {

@@ -12,12 +12,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static com.conquestiamc.OfflineEconomy.CQ;
 import static com.conquestiamc.OfflineEconomy.PLUGIN_LABEL;
+import static com.conquestiamc.OfflineEconomy.econ;
 
 /**
  * Created by Spearhartt on 8/14/2016.
  */
 public class PlayerListener implements Listener {
-    Balances config = new Balances();
+    static Balances config = new Balances();
 
     @EventHandler
     public void playerJoin(PlayerJoinEvent event) {
@@ -50,6 +51,8 @@ public class PlayerListener implements Listener {
             } else {
                 config.savePlayer(event.getPlayer());
             }
+            config.offlineBalances.remove(event.getPlayer().getName());
+            config.onlinePlayers.put(event.getPlayer().getUniqueId(), 1);
         }
     }
 
