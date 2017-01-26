@@ -40,8 +40,9 @@ public class Balances {
 
         CqLogger.debug(PLUGIN_LABEL + "[LOAD] Loading all stored player balances into memory.");
         for (String playerName : balanceData.getValues(false).keySet()) {
-            if ((long)balanceData.get(playerName) > 0) {
-                offlineBalances.put(playerName, (long) balanceData.get(playerName));
+            if ((int) balanceData.get(playerName) > 0) {
+                Long bal = new Long((int) balanceData.get(playerName));
+                offlineBalances.put(playerName, bal);
             }
         }
     }
