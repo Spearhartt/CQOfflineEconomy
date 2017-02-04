@@ -21,24 +21,24 @@ public class Balances {
     public static HashMap<String, Long> offlineBalances = new HashMap<>();
 
     public void load() {
-        CqLogger.debug(PLUGIN_LABEL + "[LOAD] Loading balances.yml");
-        CqLogger.debug(PLUGIN_LABEL + "[LOAD] Loading config.yml");
+        CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading balances.yml");
+        CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading config.yml");
         File balanceFile = new File(OfflineEconomy.dataFolder, "balances.yml");
         File file = new File(OfflineEconomy.dataFolder, "config.yml");
 
         if (!balanceFile.exists()) {
-            CqLogger.debug(PLUGIN_LABEL + "[LOAD] Creating balances.yml");
+            CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Creating balances.yml");
             OfflineEconomy.plugin.saveResource("balances.yml", false);
         }
 
         if (!file.exists()) {
-            CqLogger.debug(PLUGIN_LABEL + "[LOAD] Creating config.yml");
+            CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Creating config.yml");
             OfflineEconomy.plugin.saveResource("config.yml", false);
         }
 
         FileConfiguration balanceData = YamlConfiguration.loadConfiguration(balanceFile);
 
-        CqLogger.debug(PLUGIN_LABEL + "[LOAD] Loading all stored player balances into memory.");
+        CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading all stored player balances into memory.");
         for (String playerName : balanceData.getValues(false).keySet()) {
             if ((int) balanceData.get(playerName) > 0) {
                 Long bal = new Long((int) balanceData.get(playerName));
@@ -57,10 +57,10 @@ public class Balances {
             offlineBalances.put(player.getName(), balance);
 
             try {
-                CqLogger.debug(PLUGIN_LABEL + "[SAVE] Saving balance of " + balance + " for player " + player.getName());
+                CqLogger.debug(OfflineEconomy.plugin,"[SAVE] Saving balance of " + balance + " for player " + player.getName());
                 balanceData.save(balanceFile);
             } catch (IOException ex) {
-                CqLogger.debug(PLUGIN_LABEL + "[SAVE] IOException while saving balances.yml");
+                CqLogger.debug(OfflineEconomy.plugin,"[SAVE] IOException while saving balances.yml");
             }
         }
     }
@@ -68,10 +68,10 @@ public class Balances {
     public long loadLongBalance(OfflinePlayer player) {
         if (player != null) {
             if (offlineBalances.get(player.getName()) != null) {
-                CqLogger.debug(PLUGIN_LABEL + "[LOAD] Loading balance of " + offlineBalances.get(player.getName()) + " for player " + player.getName());
+                CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading balance of " + offlineBalances.get(player.getName()) + " for player " + player.getName());
                 return offlineBalances.get(player.getName());
             } else {
-                CqLogger.debug(PLUGIN_LABEL + "[LOAD] Player " + player.getName() + " has no stored balance.");
+                CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Player " + player.getName() + " has no stored balance.");
                 return 0;
             }
         }
@@ -81,12 +81,12 @@ public class Balances {
 
     public boolean canAfford(OfflinePlayer player, long amount) {
         if (player != null) {
-            CqLogger.debug(PLUGIN_LABEL + "[AFFORD] Checking balance of " + player.getName());
+            CqLogger.debug(OfflineEconomy.plugin,"[AFFORD] Checking balance of " + player.getName());
             if (amount <= loadLongBalance(player)) {
-                CqLogger.debug(PLUGIN_LABEL + "[AFFORD] " + player.getName() + " can afford this transaction.");
+                CqLogger.debug(OfflineEconomy.plugin,"[AFFORD] " + player.getName() + " can afford this transaction.");
                 return true;
             } else {
-                CqLogger.debug(PLUGIN_LABEL + "[AFFORD] " + player.getName() + " cannot afford this transaction.");
+                CqLogger.debug(OfflineEconomy.plugin,"[AFFORD] " + player.getName() + " cannot afford this transaction.");
                 return false;
             }
         }
@@ -95,19 +95,19 @@ public class Balances {
 
     public boolean isStored(OfflinePlayer player) {
         if (player != null) {
-            CqLogger.debug(PLUGIN_LABEL + "[STORED] Checking if " + player.getName() + " is stored.");
+            CqLogger.debug(OfflineEconomy.plugin,"[STORED] Checking if " + player.getName() + " is stored.");
             if (offlineBalances.get(player.getName()) != null) {
-                CqLogger.debug(PLUGIN_LABEL + "[STORED] " + player.getName() + " is stored.");
+                CqLogger.debug(OfflineEconomy.plugin,"[STORED] " + player.getName() + " is stored.");
                 return true;
             }
         }
-        CqLogger.debug(PLUGIN_LABEL + "[STORED] " + player.getName() + " is NOT stored.");
+        CqLogger.debug(OfflineEconomy.plugin,"[STORED] " + player.getName() + " is NOT stored.");
         return false;
     }
 
     public void setLongBalance(OfflinePlayer player, long newBalance) {
         if (player != null) {
-            CqLogger.debug(PLUGIN_LABEL + "[SET] Storing balance of " + newBalance + " for player " + player.getName());
+            CqLogger.debug(OfflineEconomy.plugin,"[SET] Storing balance of " + newBalance + " for player " + player.getName());
             offlineBalances.put(player.getName(), newBalance);
 
             File balanceFile = new File(OfflineEconomy.dataFolder, "balances.yml");
@@ -116,15 +116,15 @@ public class Balances {
             balanceData.set(player.getName(), newBalance);
 
             try {
-                //CqLogger.debug(PLUGIN_LABEL + "[SET] Saving balance of " + newBalance + " for player " + player.getName());
+                //CqLogger.debug(OfflineEconomy.plugin,"[SET] Saving balance of " + newBalance + " for player " + player.getName());
                 balanceData.save(balanceFile);
                 return;
             } catch (IOException ex) {
-                CqLogger.debug(PLUGIN_LABEL + "[SET] IOException while saving balances.yml");
+                CqLogger.debug(OfflineEconomy.plugin,"[SET] IOException while saving balances.yml");
             }
 
         } else {
-            CqLogger.debug(PLUGIN_LABEL + "[SET] Could not set balance for player: " + player.getName());
+            CqLogger.debug(OfflineEconomy.plugin,"[SET] Could not set balance for player: " + player.getName());
         }
     }
 }

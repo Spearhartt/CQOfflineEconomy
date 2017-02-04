@@ -29,7 +29,7 @@ public class OfflineEconomy extends JavaPlugin {
     public static String CQ = ChatColor.BLUE + "[" + ChatColor.YELLOW + "CQ" + ChatColor.BLUE + "]" + ChatColor.GRAY;
 
     public void onEnable() {
-        CqLogger.debug("Loading plugin: " + PLUGIN_LABEL);
+        CqLogger.debug(plugin, "Loading plugin");
         instance = this;
         OfflineEconomy = this;
         plugin = this;
@@ -44,7 +44,7 @@ public class OfflineEconomy extends JavaPlugin {
         File dir = this.getDataFolder();
         if (!dir.isDirectory()) {
             dir.mkdir();
-            CqLogger.debug(PLUGIN_LABEL + "Creating plugin folder.");
+            CqLogger.debug(plugin, "Creating plugin folder.");
         }
 
         registerEvents();
@@ -57,9 +57,9 @@ public class OfflineEconomy extends JavaPlugin {
 
         if (rsp != null) {
             econ = rsp.getProvider();
-            CqLogger.debug(PLUGIN_LABEL + "Loaded economy provider.");
+            CqLogger.debug(plugin, "Loaded economy provider.");
         } else {
-            CqLogger.debug(PLUGIN_LABEL + "Economy provider not detected. This plugin will be disabled.");
+            CqLogger.debug(plugin, "Economy provider not detected. This plugin will be disabled.");
             getServer().getPluginManager().disablePlugin(plugin);
         }
     }

@@ -62,6 +62,6 @@ public class PlayerListener implements Listener {
     }
 
     public void isLoaded() {
-        CqLogger.debug(PLUGIN_LABEL + "Loaded Player Listener.");
+        CqLogger.debug(OfflineEconomy.plugin, "Loaded Player Listener.");
     }
 }

@@ -2,12 +2,11 @@ package com.conquestiamc;
 
 import com.conquestiamc.logging.CqLogger;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.UUID;
 
-import static com.conquestiamc.OfflineEconomy.PLUGIN_LABEL;
+import static com.conquestiamc.OfflineEconomy.plugin;
 
 /**
  * Created by Spearhartt on 8/14/2016.
@@ -16,8 +15,8 @@ public class PeriodicCheck {
     Balances config = new Balances();
 
     public void periodicCheck() {
-        BukkitScheduler scheduler = OfflineEconomy.plugin.getServer().getScheduler();
-        scheduler.scheduleSyncRepeatingTask(OfflineEconomy.plugin, new Runnable() {
+        BukkitScheduler scheduler = plugin.getServer().getScheduler();
+        scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
             public void run() {
                 savePlayers();
             }
@@ -35,6 +34,6 @@ public class PeriodicCheck {
     }
 
     public void isLoaded() {
-        CqLogger.debug(PLUGIN_LABEL + "Loaded Periodic Check.");
+        CqLogger.debug(plugin, "Loaded Periodic Check.");
     }
 }
