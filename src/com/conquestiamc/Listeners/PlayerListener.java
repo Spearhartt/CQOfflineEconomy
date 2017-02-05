@@ -25,10 +25,8 @@ public class PlayerListener implements Listener {
     public void playerJoin(PlayerJoinEvent event) {
         if (event.getPlayer() != null) {
             if (config.isStored(event.getPlayer())) {
-                Bukkit.broadcastMessage("Stored Balance: " + config.loadBalance(event.getPlayer()));
                 double storedBalance = config.loadBalance(event.getPlayer());
                 double currentBalance = OfflineEconomy.econ.getBalance(event.getPlayer());
-                Bukkit.broadcastMessage("Current Balance: " + currentBalance + " | Stored Balance: " + storedBalance);
                 if (storedBalance != currentBalance) {
                     if (currentBalance > storedBalance) {
                         OfflineEconomy.econ.withdrawPlayer(event.getPlayer(), currentBalance - storedBalance);
