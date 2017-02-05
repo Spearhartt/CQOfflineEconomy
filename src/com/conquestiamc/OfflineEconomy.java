@@ -68,7 +68,7 @@ public class OfflineEconomy extends JavaPlugin {
     }
 
     public void onDisable() {
-        checker.savePlayers();
+        checker.saveAllPlayers();
     }
 
     private void registerEvents() {

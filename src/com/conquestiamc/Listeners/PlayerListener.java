@@ -11,6 +11,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
+
 import static com.conquestiamc.OfflineEconomy.CQ;
 import static com.conquestiamc.OfflineEconomy.PLUGIN_LABEL;
 import static com.conquestiamc.OfflineEconomy.econ;
@@ -27,6 +29,7 @@ public class PlayerListener implements Listener {
             if (config.isStored(event.getPlayer())) {
                 double storedBalance = config.loadBalance(event.getPlayer());
                 double currentBalance = OfflineEconomy.econ.getBalance(event.getPlayer());
+                DecimalFormat df = new DecimalFormat("0.00");
                 if (storedBalance != currentBalance) {
                     if (currentBalance > storedBalance) {
                         OfflineEconomy.econ.withdrawPlayer(event.getPlayer(), currentBalance - storedBalance);
@@ -34,7 +37,7 @@ public class PlayerListener implements Listener {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                event.getPlayer().sendMessage(CQ + " You spent " + ChatColor.RED + (currentBalance - storedBalance) + " Edens" + ChatColor.GRAY + " while offline.");
+                                event.getPlayer().sendMessage(CQ + " You spent " + ChatColor.RED + df.format(currentBalance - storedBalance) + " Edens" + ChatColor.GRAY + " while offline.");
                             }
                         }.runTaskLater(OfflineEconomy.plugin, 60L);
 
@@ -44,7 +47,7 @@ public class PlayerListener implements Listener {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                event.getPlayer().sendMessage(CQ + " You gained " + ChatColor.GREEN + (storedBalance - currentBalance) + " Edens" + ChatColor.GRAY + " while offline.");
+                                event.getPlayer().sendMessage(CQ + " You gained " + ChatColor.GREEN + df.format(storedBalance - currentBalance) + " Edens" + ChatColor.GRAY + " while offline.");
                             }
                         }.runTaskLater(OfflineEconomy.plugin, 60L);
                     }

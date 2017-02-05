@@ -33,6 +33,12 @@ public class PeriodicCheck {
         }
     }
 
+    public void saveAllPlayers() {
+        for (UUID key: config.onlinePlayers.keySet()) {
+            config.savePlayer(Bukkit.getPlayer(key));
+        }
+    }
+
     public void isLoaded() {
         CqLogger.debug(plugin, "Loaded Periodic Check.");
     }
