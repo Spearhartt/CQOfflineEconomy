@@ -3,6 +3,7 @@ package com.conquestiamc.Listeners;
 import com.conquestiamc.Balances;
 import com.conquestiamc.OfflineEconomy;
 import com.conquestiamc.logging.CqLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,8 +25,10 @@ public class PlayerListener implements Listener {
     public void playerJoin(PlayerJoinEvent event) {
         if (event.getPlayer() != null) {
             if (config.isStored(event.getPlayer())) {
-                double storedBalance = config.loadLongBalance(event.getPlayer()) * 0.01;
+                Bukkit.broadcastMessage("Stored Balance: " + config.loadBalance(event.getPlayer()));
+                double storedBalance = config.loadBalance(event.getPlayer());
                 double currentBalance = OfflineEconomy.econ.getBalance(event.getPlayer());
+                Bukkit.broadcastMessage("Current Balance: " + currentBalance + " | Stored Balance: " + storedBalance);
                 if (storedBalance != currentBalance) {
                     if (currentBalance > storedBalance) {
                         OfflineEconomy.econ.withdrawPlayer(event.getPlayer(), currentBalance - storedBalance);

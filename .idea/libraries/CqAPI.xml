@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="CqAPI">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../Libraries/CqAPI.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
