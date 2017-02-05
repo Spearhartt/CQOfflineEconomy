@@ -57,7 +57,7 @@ public class Balances {
             offlineBalances.put(player.getName(), balance);
 
             try {
-                CqLogger.debug(OfflineEconomy.plugin,"[SAVE] Saving balance of " + balance + " for player " + player.getName());
+                CqLogger.debug(OfflineEconomy.plugin,"[SAVE] Saving balance of " + (balance/100) + " for player " + player.getName());
                 balanceData.save(balanceFile);
             } catch (IOException ex) {
                 CqLogger.debug(OfflineEconomy.plugin,"[SAVE] IOException while saving balances.yml");
@@ -107,7 +107,7 @@ public class Balances {
 
     public void setLongBalance(OfflinePlayer player, long newBalance) {
         if (player != null) {
-            CqLogger.debug(OfflineEconomy.plugin,"[SET] Storing balance of " + newBalance + " for player " + player.getName());
+            CqLogger.debug(OfflineEconomy.plugin,"[SET] Storing balance of " + (newBalance/100) + " for player " + player.getName());
             offlineBalances.put(player.getName(), newBalance);
 
             File balanceFile = new File(OfflineEconomy.dataFolder, "balances.yml");

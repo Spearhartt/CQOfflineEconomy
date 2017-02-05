@@ -25,10 +25,13 @@ public class OfflineEconomy extends JavaPlugin {
     static String dataFolder;
     public static Plugin plugin;
 
+
+
     public static String PLUGIN_LABEL = ChatColor.GOLD + "[" + ChatColor.GREEN + "Offline Economy" + ChatColor.GOLD + "]" + ChatColor.WHITE;
     public static String CQ = ChatColor.BLUE + "[" + ChatColor.YELLOW + "CQ" + ChatColor.BLUE + "]" + ChatColor.GRAY;
 
     public void onEnable() {
+        plugin = this;
         CqLogger.debug(plugin, "Loading plugin");
         instance = this;
         OfflineEconomy = this;
