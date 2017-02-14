@@ -14,13 +14,14 @@ import static com.conquestiamc.OfflineEconomy.plugin;
 public class PeriodicCheck {
     Balances config = new Balances();
 
+    // I don't actually see the need in this.
     public void periodicCheck() {
         BukkitScheduler scheduler = plugin.getServer().getScheduler();
-        scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
-            public void run() {
-                savePlayers();
-            }
-        }, 200L, 1200L);
+//        scheduler.scheduleSyncRepeatingTask(plugin, new Runnable() {
+//            public void run() {
+//                savePlayers();
+//            }
+//        }, 200L, 1200L);
     }
 
     public void savePlayers() {
