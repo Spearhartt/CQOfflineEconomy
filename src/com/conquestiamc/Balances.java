@@ -1,12 +1,15 @@
 package com.conquestiamc;
 
 import com.conquestiamc.logging.CqLogger;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -18,66 +21,90 @@ public class Balances {
     public static HashMap<UUID, Integer> onlinePlayers = new HashMap<>();
     public static HashMap<String, Double> offlineBalances = new HashMap<>();
 
-    /** Loads all the data from the balances.yml */
-    public void load() {
-        CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading balances.yml");
-        CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading config.yml");
-        File balanceFile = new File(OfflineEconomy.dataFolder, "balances.yml");
-        File file = new File(OfflineEconomy.dataFolder, "config.yml");
+    private static MongoClient mongoClient;     // How we talk to mongo
+    private static DB cqDB;                     // The data base to look through
+    private static DBCollection balances;       // The collection (essentially mysql table)
 
-        /** Creates balances.yml if it does not exist */
-        if (!balanceFile.exists()) {
-            CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Creating balances.yml");
-            OfflineEconomy.plugin.saveResource("balances.yml", false);
+    private static Balances instance;           // We really don't want more than one created.
+
+    /**
+     * Need to provide some type of access to the class.
+     *
+     * @return - instance of this class.
+     */
+    public static Balances initialize() {
+        if (instance == null) {
+            instance = new Balances();
         }
+        return instance;
+    }
 
-        /** Creates config.yml if it does not exist */
-        if (!file.exists()) {
-            CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Creating config.yml");
-            OfflineEconomy.plugin.saveResource("config.yml", false);
+    /**
+     * Establishes connection to mongo db.
+     */
+    private Balances() {
+        try {
+            mongoClient = new MongoClient();
+        } catch (UnknownHostException e) {
+            CqLogger.severe(OfflineEconomy.OfflineEconomy, "Error connecting to database!");
+            Bukkit.getPluginManager().disablePlugin(OfflineEconomy.OfflineEconomy);
+            return;
         }
-
-        FileConfiguration balanceData = YamlConfiguration.loadConfiguration(balanceFile);
-
-        /** Loads all balances into a hashMap */
-        CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading all stored player balances into memory.");
-        for (String playerName : balanceData.getValues(false).keySet()) {
-            double bal = (double)balanceData.get(playerName);
-            if (bal > 0) {
-                offlineBalances.put(playerName, bal);
-                //CqLogger.debug(OfflineEconomy.plugin, "[LOAD] Loading balance of " + bal + " for player " + playerName);
-            }
-        }
+        // Database is same in MySQL.
+        cqDB = mongoClient.getDB("Conquestia");
+        // Collections are similar to tables.
+        balances = cqDB.getCollection("Balances");
     }
 
     /** Saves a players balance to the balances.yml */
     public void savePlayer(OfflinePlayer player) {
+        // This if statement is a tad confusing why .getPlayer() null check?
         if (player != null && player.getPlayer() != null) {
-            File balanceFile = new File(OfflineEconomy.dataFolder, "balances.yml");
-            FileConfiguration balanceData = YamlConfiguration.loadConfiguration(balanceFile);
-
             double balance = new CQPlayer().getOfflineBalance(player);
-            balanceData.set(player.getName(), balance);
-            offlineBalances.put(player.getName(), balance);
 
-            try {
-                CqLogger.debug(OfflineEconomy.plugin,"[SAVE] Saving balance of " + balance + " for player " + player.getName());
-                balanceData.save(balanceFile);
-            } catch (IOException ex) {
-                CqLogger.debug(OfflineEconomy.plugin,"[SAVE] IOException while saving balances.yml");
+            // Used to determine if the player exists in DB.
+            BasicDBObject search = new BasicDBObject("player", player.getUniqueId());
+            DBObject found = balances.findOne(search);
+
+            // Creates new document for updating player info.
+            BasicDBObject playerInfo = new BasicDBObject("player", player.getUniqueId());
+            playerInfo.put("balance", balance);
+
+            // If the entry exists only update, if not then insert.
+            if (found == null) {
+                balances.insert(playerInfo);
+            } else {
+                balances.update(found, playerInfo);
             }
+
+            offlineBalances.put(player.getName(), balance);
         }
     }
 
-    /** Loads a players balance from the balances hashMap */
+    /**
+     *
+     */
     public double loadBalance(OfflinePlayer player) {
         if (player != null) {
-            if (offlineBalances.get(player.getName()) != null) {
+            if (offlineBalances.containsKey(player.getName())) {
                 CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading balance of " + offlineBalances.get(player.getName()) + " for player " + player.getName());
                 return offlineBalances.get(player.getName());
             } else {
                 CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Player " + player.getName() + " has no stored balance.");
-                return 0;
+                // How about we load the balance here?
+                BasicDBObject search = new BasicDBObject("player", player.getUniqueId());
+                DBObject found = balances.findOne(search);
+
+                if (found == null) {
+                    return 0;
+                }
+
+                if (found.get("balance") == null) {
+                    return 0;
+                } else {
+                    offlineBalances.put(player.getName(), (Double) found.get("balance"));
+                    return offlineBalances.get(player.getName());
+                }
             }
         }
         return 0;
@@ -102,7 +129,7 @@ public class Balances {
     public boolean isStored(OfflinePlayer player) {
         if (player != null) {
             CqLogger.debug(OfflineEconomy.plugin,"[STORED] Checking if " + player.getName() + " is stored.");
-            if (offlineBalances.get(player.getName()) != null) {
+            if (offlineBalances.containsKey(player.getName())) {
                 CqLogger.debug(OfflineEconomy.plugin,"[STORED] " + player.getName() + " is stored.");
                 return true;
             }
@@ -114,24 +141,18 @@ public class Balances {
     /** Sets the player's balance to the given value */
     public void setBalance(OfflinePlayer player, double newBalance) {
         if (player != null) {
-            CqLogger.debug(OfflineEconomy.plugin,"[SET] Storing balance of " + newBalance + " for player " + player.getName());
             offlineBalances.put(player.getName(), newBalance);
+            BasicDBObject search = new BasicDBObject("player", player.getUniqueId());
+            DBObject find = balances.findOne(search);
 
-            File balanceFile = new File(OfflineEconomy.dataFolder, "balances.yml");
+            BasicDBObject entry = new BasicDBObject("player", player.getUniqueId());
+            entry.put("balance", newBalance);
 
-            FileConfiguration balanceData = YamlConfiguration.loadConfiguration(balanceFile);
-            balanceData.set(player.getName(), newBalance);
-
-            try {
-                //CqLogger.debug(OfflineEconomy.plugin,"[SET] Saving balance of " + newBalance + " for player " + player.getName());
-                balanceData.save(balanceFile);
-                return;
-            } catch (IOException ex) {
-                CqLogger.debug(OfflineEconomy.plugin,"[SET] IOException while saving balances.yml");
+            if (find == null) {
+                balances.insert(entry);
+            } else {
+                balances.update(find, entry);
             }
-
-        } else {
-            CqLogger.debug(OfflineEconomy.plugin,"[SET] Could not set balance for player: " + player.getName());
         }
     }
 }

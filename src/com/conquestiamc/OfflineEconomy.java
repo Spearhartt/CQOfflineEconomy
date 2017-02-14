@@ -10,19 +10,14 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 
 /**
  * Created by Spearhartt on 8/14/2016.
  */
 public class OfflineEconomy extends JavaPlugin {
     public static OfflineEconomy OfflineEconomy;
-    private static OfflineEconomy instance;
-    private static CommandModule commandHandler;
-    private static Balances config;
     private static PeriodicCheck checker;
     public static Economy econ;
-    static String dataFolder;
     public static Plugin plugin;
 
 
@@ -33,28 +28,27 @@ public class OfflineEconomy extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         CqLogger.debug(plugin, "Loading plugin");
-        instance = this;
         OfflineEconomy = this;
         plugin = this;
 
-        commandHandler = new CommandModule();
-        config = new Balances();
+        CommandModule commandHandler = new CommandModule();
+//        config = new Balances();
 
         checker = new PeriodicCheck();
         checker.periodicCheck();
         checker.isLoaded();
 
-        File dir = this.getDataFolder();
-        if (!dir.isDirectory()) {
-            dir.mkdir();
-            CqLogger.debug(plugin, "Creating plugin folder.");
-        }
+//        File dir = this.getDataFolder();
+//        if (!dir.isDirectory()) {
+//            dir.mkdir();
+//            CqLogger.debug(plugin, "Creating plugin folder.");
+//        }
 
         registerEvents();
 
-        dataFolder = dir.getPath();
+//        dataFolder = dir.getPath();
 
-        config.load();
+//        config.load();
 
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 

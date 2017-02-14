@@ -12,7 +12,7 @@ import static com.conquestiamc.OfflineEconomy.plugin;
  * Created by Spearhartt on 8/14/2016.
  */
 public class PeriodicCheck {
-    Balances config = new Balances();
+    Balances config = Balances.initialize();
 
     // I don't actually see the need in this.
     public void periodicCheck() {
