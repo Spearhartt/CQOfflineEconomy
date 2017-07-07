@@ -1,4 +1,5 @@
 name: EconTracker
 main: com.conquestiamc.EconTracker
+version: 0.1
 author: Spearhartt
 depend: [ConquestiaAPI, Vault]
