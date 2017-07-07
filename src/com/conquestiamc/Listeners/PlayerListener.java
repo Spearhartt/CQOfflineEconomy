@@ -1,7 +1,7 @@
 package com.conquestiamc.Listeners;
 
 import com.conquestiamc.Balances;
-import com.conquestiamc.OfflineEconomy;
+import com.conquestiamc.EconTracker;
 import com.conquestiamc.logging.CqLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
 
-import static com.conquestiamc.OfflineEconomy.CQ;
+import static com.conquestiamc.EconTracker.CQ;
 
 /**
  * Created by Spearhartt on 8/14/2016.
@@ -24,7 +24,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void playerJoin(final PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTaskLater(OfflineEconomy.OfflineEconomy, new Runnable() {
+        Bukkit.getScheduler().runTaskLater(EconTracker.OfflineEconomy, new Runnable() {
             @Override
             public void run() {
                 handlePlayer(event.getPlayer());
@@ -38,35 +38,35 @@ public class PlayerListener implements Listener {
     }
 
     public void isLoaded() {
-        CqLogger.debug(OfflineEconomy.plugin, "Loaded Player Listener.");
+        CqLogger.debug(EconTracker.plugin, "Loaded Player Listener.");
     }
 
     public void handlePlayer(final Player player) {
         if (player != null) {
             if (config.isStored(player)) {
                 final double storedBalance = config.loadBalance(player);
-                final double currentBalance = OfflineEconomy.econ.getBalance(player);
+                final double currentBalance = EconTracker.econ.getBalance(player);
                 final DecimalFormat df = new DecimalFormat("0.00");
                 if (storedBalance != currentBalance) {
                     if (currentBalance > storedBalance) {
-                        OfflineEconomy.econ.withdrawPlayer(player, currentBalance - storedBalance);
+                        EconTracker.econ.withdrawPlayer(player, currentBalance - storedBalance);
 
                         new BukkitRunnable() {
                             @Override
                             public void run() {
                                 player.sendMessage(CQ + " You spent " + ChatColor.RED + df.format(currentBalance - storedBalance) + " Edens" + ChatColor.GRAY + " while offline.");
                             }
-                        }.runTaskLater(OfflineEconomy.plugin, 60L);
+                        }.runTaskLater(EconTracker.plugin, 60L);
 
                     } else if (storedBalance > currentBalance) {
-                        OfflineEconomy.econ.depositPlayer(player, storedBalance - currentBalance);
+                        EconTracker.econ.depositPlayer(player, storedBalance - currentBalance);
 
                         new BukkitRunnable() {
                             @Override
                             public void run() {
                                 player.sendMessage(CQ + " You gained " + ChatColor.GREEN + df.format(storedBalance - currentBalance) + " Edens" + ChatColor.GRAY + " while offline.");
                             }
-                        }.runTaskLater(OfflineEconomy.plugin, 60L); // 0(10
+                        }.runTaskLater(EconTracker.plugin, 60L); // 0(10
                     }
                 }
             } else {

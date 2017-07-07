@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CqOfflineEconomy.jar">
+    <output-path>$PROJECT_DIR$/../_JARS</output-path>
+    <root id="archive" name="CqOfflineEconomy.jar.jar">
+      <element id="module-output" name="CQOfflineEconomy" />
+    </root>
+  </artifact>
+</component>

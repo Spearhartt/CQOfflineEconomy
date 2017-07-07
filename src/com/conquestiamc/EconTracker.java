@@ -14,9 +14,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Created by Spearhartt on 8/14/2016.
  */
-public class OfflineEconomy extends JavaPlugin {
-    public static OfflineEconomy OfflineEconomy;
-    private static PeriodicCheck checker;
+public class EconTracker extends JavaPlugin {
+    public static EconTracker OfflineEconomy;
+    private static PlayerHandler pHandler;
     public static Economy econ;
     public static Plugin plugin;
 
@@ -32,23 +32,11 @@ public class OfflineEconomy extends JavaPlugin {
         plugin = this;
 
         CommandModule commandHandler = new CommandModule();
-//        config = new Balances();
 
-        checker = new PeriodicCheck();
-        checker.periodicCheck();
-        checker.isLoaded();
-
-//        File dir = this.getDataFolder();
-//        if (!dir.isDirectory()) {
-//            dir.mkdir();
-//            CqLogger.debug(plugin, "Creating plugin folder.");
-//        }
+        pHandler = new PlayerHandler();
+        pHandler.isLoaded();
 
         registerEvents();
-
-//        dataFolder = dir.getPath();
-
-//        config.load();
 
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 
@@ -62,7 +50,7 @@ public class OfflineEconomy extends JavaPlugin {
     }
 
     public void onDisable() {
-        checker.saveAllPlayers();
+        pHandler.saveAllPlayers();
     }
 
     private void registerEvents() {

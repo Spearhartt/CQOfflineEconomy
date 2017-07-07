@@ -1,5 +1,4 @@
-name: CQOfflineEconomy
-main: com.conquestiamc.OfflineEconomy
-version: 0.0.1
+name: EconTracker
+main: com.conquestiamc.EconTracker
 author: Spearhartt
 depend: [ConquestiaAPI, Vault]

@@ -1,15 +1,10 @@
 package com.conquestiamc;
 
 import com.conquestiamc.logging.CqLogger;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
+import com.mongodb.*;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -42,12 +37,12 @@ public class Balances {
     /**
      * Establishes connection to mongo db.
      */
-    private Balances() {
+    public Balances() {
         try {
             mongoClient = new MongoClient();
-        } catch (UnknownHostException e) {
-            CqLogger.severe(OfflineEconomy.OfflineEconomy, "Error connecting to database!");
-            Bukkit.getPluginManager().disablePlugin(OfflineEconomy.OfflineEconomy);
+        } catch (Exception e) {
+            CqLogger.severe(EconTracker.OfflineEconomy, "Error connecting to database!");
+            Bukkit.getPluginManager().disablePlugin(EconTracker.OfflineEconomy);
             return;
         }
         // Database is same in MySQL.
@@ -87,10 +82,10 @@ public class Balances {
     public double loadBalance(OfflinePlayer player) {
         if (player != null) {
             if (offlineBalances.containsKey(player.getName())) {
-                CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Loading balance of " + offlineBalances.get(player.getName()) + " for player " + player.getName());
+                CqLogger.debug(EconTracker.plugin, "[LOAD] Loading balance of " + offlineBalances.get(player.getName()) + " for player " + player.getName());
                 return offlineBalances.get(player.getName());
             } else {
-                CqLogger.debug(OfflineEconomy.plugin,"[LOAD] Player " + player.getName() + " has no stored balance.");
+                CqLogger.debug(EconTracker.plugin, "[LOAD] Player " + player.getName() + " has no stored balance.");
                 // How about we load the balance here?
                 BasicDBObject search = new BasicDBObject("player", player.getUniqueId());
                 DBObject found = balances.findOne(search);
@@ -113,12 +108,12 @@ public class Balances {
     /** Checks if a player can afford a transaction */
     public boolean canAfford(OfflinePlayer player, long amount) {
         if (player != null) {
-            CqLogger.debug(OfflineEconomy.plugin,"[AFFORD] Checking balance of " + player.getName());
+            CqLogger.debug(EconTracker.plugin, "[AFFORD] Checking balance of " + player.getName());
             if (amount <= loadBalance(player)) {
-                CqLogger.debug(OfflineEconomy.plugin,"[AFFORD] " + player.getName() + " can afford this transaction.");
+                CqLogger.debug(EconTracker.plugin, "[AFFORD] " + player.getName() + " can afford this transaction.");
                 return true;
             } else {
-                CqLogger.debug(OfflineEconomy.plugin,"[AFFORD] " + player.getName() + " cannot afford this transaction.");
+                CqLogger.debug(EconTracker.plugin, "[AFFORD] " + player.getName() + " cannot afford this transaction.");
                 return false;
             }
         }
@@ -128,13 +123,13 @@ public class Balances {
     /** Checks if a player is stored in the balances hashMap */
     public boolean isStored(OfflinePlayer player) {
         if (player != null) {
-            CqLogger.debug(OfflineEconomy.plugin,"[STORED] Checking if " + player.getName() + " is stored.");
+            CqLogger.debug(EconTracker.plugin, "[STORED] Checking if " + player.getName() + " is stored.");
             if (offlineBalances.containsKey(player.getName())) {
-                CqLogger.debug(OfflineEconomy.plugin,"[STORED] " + player.getName() + " is stored.");
+                CqLogger.debug(EconTracker.plugin, "[STORED] " + player.getName() + " is stored.");
                 return true;
             }
         }
-        CqLogger.debug(OfflineEconomy.plugin,"[STORED] " + player.getName() + " is NOT stored.");
+        CqLogger.debug(EconTracker.plugin, "[STORED] " + player.getName() + " is NOT stored.");
         return false;
     }
 

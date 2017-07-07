@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
  * Created by Spearhartt on 8/14/2016.
  */
 public class CQPlayer {
-    Economy econ = OfflineEconomy.econ;
+    Economy econ = EconTracker.econ;
 
     public double getOnlineBalance(Player player) {
         return econ.getBalance(player);
